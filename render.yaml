@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: endosim-platform
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: COZE_BOT_ID
+        sync: false
+      # 二选一：PAT 简单即开即用；OAuth JWT 更安全但需正确配置 kid + 私钥
+      - key: COZE_PAT_TOKEN
+        sync: false
+      - key: COZE_APP_ID
+        sync: false
+      - key: COZE_KID
+        sync: false
+      - key: COZE_PRIVATE_KEY
+        sync: false
