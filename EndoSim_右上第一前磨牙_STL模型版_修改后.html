@@ -10,17 +10,41 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
     <!-- FontAwesome Font for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+        <style>
+        /* =====================================================
+           EndoSim 明亮牙科诊所风格设计系统
+           浅色面板 / 柔和阴影 / 蓝绿强调色 / 诊所照片背景
+        ===================================================== */
         :root {
-            --bg-color: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.85);
-            --panel-border: rgba(255, 255, 255, 0.1);
+            --bg-overlay: transparent;
+            --panel-bg: rgba(15, 23, 42, 0.78);
+            --panel-solid: #0f172a;
+            --panel-border: rgba(56, 189, 248, 0.30);
+            --panel-border-strong: rgba(56, 189, 248, 0.55);
+            --bg-color: #020617;
+            --bg-grid: rgba(14, 165, 233, 0.08);
+            --accent-teal: #2dd4bf;
             --accent-blue: #38bdf8;
-            --accent-green: #22c55e;
-            --accent-amber: #f59e0b;
-            --accent-red: #ef4444;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+            --accent-cyan: #22d3ee;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-red: #f87171;
+            --accent-purple: #a78bfa;
+            --text-main: #f1f5f9;
+            --text-sub: #cbd5e1;
+            --text-muted: #94a3b8;
+            --shadow-sm: 0 2px 8px rgba(31, 41, 55, 0.06);
+            --shadow-md: 0 8px 24px rgba(31, 41, 55, 0.08);
+            --shadow-lg: 0 16px 40px rgba(31, 41, 55, 0.10);
+            --shadow-glow-blue: 0 0 20px rgba(14, 165, 233, 0.10);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
         }
 
         * {
@@ -30,8 +54,8 @@
             user-select: none;
         }
 
-        body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+        html, body {
+            font-family: var(--font-sans);
             background-color: var(--bg-color);
             color: var(--text-main);
             overflow: hidden;
@@ -39,46 +63,101 @@
             width: 100vw;
         }
 
-        /* Top Header */
+        html {
+            min-width: auto;
+        }
+
+        /* 教育项目目录下的真实牙科诊室照片背景 */
+        body {
+            background: url('background-image.jpg') center/cover no-repeat fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: auto;
+        }
+
+        /* 操作窗口外不再加遮罩，直接露出原图 */
+        body::before {
+            display: none;
+        }
+
+        /* 操作窗口容器：约占屏幕 80% */
+        .app-window {
+            width: 81vw;
+            height: 70vh;
+            min-width: 1100px;
+            min-height: 650px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 4px solid #000000;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+            background: #0f172a;
+            z-index: 1;
+        }
+
+        /* ---------- Top Header ---------- */
         header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--panel-border);
+            position: relative;
+            flex-shrink: 0;
+            width: 100%;
+            height: 64px;
+            background: linear-gradient(180deg, rgba(15,23,42,0.82) 0%, rgba(15,23,42,0.72) 100%);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--panel-border-strong);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
+            padding: 0 28px;
             z-index: 100;
+            box-shadow: 0 4px 20px rgba(31, 41, 55, 0.08);
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--accent-blue);
+            gap: 14px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+            flex: 1;
         }
 
         .brand i {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
+            color: var(--accent-teal);
+            filter: drop-shadow(0 0 8px rgba(20, 184, 166, 0.25));
         }
 
-        .status-badge {
+.brand span {
+            color: #7dd3fc;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        }
+
+.status-badge {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            color: var(--accent-blue);
+            gap: 10px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 7px 16px;
+            border-radius: 24px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent-green);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: var(--transition-base);
+        }
+
+        .status-badge:hover {
+            background: rgba(16, 185, 129, 0.14);
+            box-shadow: 0 0 16px rgba(16, 185, 129, 0.10);
         }
 
         .status-dot {
@@ -86,15 +165,22 @@
             height: 8px;
             border-radius: 50%;
             background-color: var(--accent-green);
-            box-shadow: 0 0 8px var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse 2s infinite ease-in-out;
         }
 
-        /* Main Container */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        /* ---------- Main Container ---------- */
         .main-container {
             position: relative;
-            width: 100vw;
-            height: 100vh;
-            padding-top: 60px;
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            overflow: hidden;
         }
 
         #webgl-canvas {
@@ -103,124 +189,290 @@
             display: block;
         }
 
-        /* Overlay Panels */
+        /* ---------- UI Panels ---------- */
         .panel {
             position: absolute;
             background: var(--panel-bg);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+            transition: var(--transition-base);
+        }
+
+        .panel:hover {
+            border-color: var(--panel-border-strong);
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(20, 184, 166, 0.08);
+        }
+
+        /* ---------- Right Column (prevents tool & telemetry overlap) ---------- */
+        .right-column {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            bottom: 110px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             z-index: 10;
         }
 
-        /* Left Step Control Panel */
-        .steps-panel {
-            top: 80px;
-            left: 20px;
-            width: 320px;
+        .right-column > .panel {
+            position: relative;
+            top: auto;
+            right: auto;
+            bottom: auto;
+            left: auto;
+            width: 100%;
+            padding: 16px;
+            pointer-events: auto;
+            flex-shrink: 0;
+        }
+
+        .right-column .tools-panel,
+        .right-column .telemetry-panel {
+            flex-shrink: 0;
+            max-height: none;
+            overflow: visible;
+        }
+
+        .right-column .panel-title {
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            gap: 8px;
+        }
+
+        .right-column .tool-grid {
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .right-column .tool-btn {
+            padding: 8px 4px;
+            font-size: 0.75rem;
+        }
+
+        .right-column .metric-box {
+            margin-bottom: 10px;
+        }
+
+        .right-column .metric-header {
+            margin-bottom: 6px;
+            font-size: 0.75rem;
+        }
+
+        .right-column .metric-value {
+            font-size: 0.8rem;
+        }
+
+        .right-column .apex-display {
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .right-column .apex-value {
+            font-size: 1.75rem;
+        }
+
+        .right-column .apex-label {
+            font-size: 0.65rem;
         }
 
         .panel-title {
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding-bottom: 12px;
             border-bottom: 1px solid var(--panel-border);
-            padding-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .panel-title i {
+            color: var(--accent-teal);
+            font-size: 0.95rem;
+        }
+
+        /* ---------- Left Step Panel ---------- */
+        .steps-panel {
+            top: 10px;
+            left: 10px;
+            width: 300px;
+            max-height: calc(100% - 20px);
+            overflow-y: auto;
+        }
+
+        .steps-panel::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .steps-panel::-webkit-scrollbar-thumb {
+            background: var(--panel-border-strong);
+            border-radius: 2px;
         }
 
         .step-list {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .step-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 9px 12px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-teal);
+            opacity: 0;
+            transition: var(--transition-base);
         }
 
         .step-item:hover {
-            background: rgba(56, 189, 248, 0.1);
-            border-color: var(--accent-blue);
+            background: rgba(14, 165, 233, 0.08);
+            border-color: rgba(14, 165, 233, 0.40);
+            transform: translateX(4px);
+        }
+
+        .step-item:hover::before {
+            opacity: 1;
         }
 
         .step-item.active {
-            background: rgba(56, 189, 248, 0.2);
+            background: rgba(14, 165, 233, 0.12);
             border-color: var(--accent-blue);
-            color: #fff;
+            box-shadow: 0 0 16px rgba(14, 165, 233, 0.10);
+        }
+
+        .step-item.active::before {
+            opacity: 1;
+        }
+
+        .step-item.completed {
+            border-color: rgba(16, 185, 129, 0.45);
+            background: rgba(16, 185, 129, 0.10);
+        }
+
+        .step-item.completed::before {
+            background: var(--accent-green);
+            opacity: 1;
         }
 
         .step-num {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.76);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             flex-shrink: 0;
+            transition: var(--transition-base);
+            border: 1px solid var(--panel-border);
+        }
+
+        .step-item:hover .step-num {
+            background: rgba(14, 165, 233, 0.18);
+            border-color: var(--accent-blue);
         }
 
         .step-item.active .step-num {
             background: var(--accent-blue);
-            color: #000;
+            color: #fff;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 12px rgba(14, 165, 233, 0.30);
         }
 
-        /* Instrument / Tool Selection Panel */
+        .step-item.completed .step-num {
+            background: var(--accent-green);
+            color: #fff;
+            border-color: var(--accent-green);
+        }
+
+        /* ---------- Tool Panel ---------- */
         .tools-panel {
-            top: 80px;
-            right: 20px;
-            width: 340px;
+            top: 84px;
+            right: 18px;
+            width: 320px;
         }
 
         .tool-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
+            gap: 10px;
+            margin-bottom: 18px;
         }
 
         .tool-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(15, 23, 42, 0.72);
             border: 1px solid var(--panel-border);
             color: var(--text-main);
-            padding: 8px 4px;
-            border-radius: 8px;
+            padding: 10px 6px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             text-align: center;
-            font-size: 0.8rem;
-            transition: all 0.2s;
+            font-size: 0.78rem;
+            font-weight: 500;
+            transition: var(--transition-base);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, transparent 100%);
+            opacity: 0;
+            transition: var(--transition-base);
         }
 
         .tool-btn:hover {
-            border-color: var(--accent-blue);
-            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--accent-teal);
+            background: rgba(20, 184, 166, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.12);
+        }
+
+        .tool-btn:hover::after {
+            opacity: 1;
         }
 
         .tool-btn.active {
-            background: var(--accent-blue);
-            color: #0f172a;
-            font-weight: 600;
-            border-color: var(--accent-blue);
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            color: #fff;
+            font-weight: 700;
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.25);
         }
 
         .color-dot {
@@ -228,145 +480,164 @@
             height: 10px;
             border-radius: 50%;
             display: inline-block;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            box-shadow: inset 0 0 2px rgba(0,0,0,0.15);
         }
 
-        /* Real-time Telemetry & Apex Locator View */
+        .tools-panel .metric-box {
+            padding: 12px 14px;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 10px;
+            transition: var(--transition-base);
+        }
+
+        .tools-panel .metric-box:hover {
+            border-color: var(--panel-border-strong);
+            background: rgba(15, 23, 42, 0.78);
+        }
+
+        /* ---------- Telemetry Panel ---------- */
         .telemetry-panel {
-            bottom: 20px;
-            right: 20px;
-            width: 320px;
+            bottom: 100px;
+            right: 18px;
+            width: 300px;
         }
 
         .metric-box {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .metric-header {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             color: var(--text-sub);
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
         }
 
         .metric-value {
+            font-family: var(--font-mono);
             font-weight: 600;
             color: var(--text-main);
+            font-size: 0.85rem;
         }
 
         .progress-bar-bg {
             width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            height: 8px;
+            background: rgba(209, 213, 219, 0.50);
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
+            border: 1px solid var(--panel-border);
+        }
+
+        .progress-bar-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.10) 50%, transparent 100%);
+            animation: shimmer 2s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .progress-bar-fill {
             height: 100%;
             width: 0%;
-            background: var(--accent-green);
+            background: linear-gradient(90deg, var(--accent-green) 0%, #34d399 100%);
             transition: width 0.1s linear, background-color 0.2s ease;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+        }
+
+        .progress-bar-fill.warning {
+            background: linear-gradient(90deg, var(--accent-amber) 0%, #fbbf24 100%);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);
+        }
+
+        .progress-bar-fill.danger {
+            background: linear-gradient(90deg, var(--accent-red) 0%, #f87171 100%);
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.25);
         }
 
         /* Apex Locator Display */
         .apex-display {
-            background: #000;
-            border-radius: 8px;
-            padding: 12px;
+            background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            border-radius: var(--radius-md);
+            padding: 16px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 10px;
+            border: 1px solid var(--panel-border-strong);
+            margin-top: 14px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .apex-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent-green) 50%, transparent 100%);
+            opacity: 0.5;
         }
 
         .apex-value {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-family: var(--font-mono);
+            font-size: 2rem;
+            font-weight: 700;
             color: var(--accent-green);
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+            letter-spacing: 3px;
         }
 
         .apex-label {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-top: 2px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
         }
 
-        /* Bottom Controls / Instruction Banner */
-        .bottom-banner {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
-            padding: 12px 24px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            z-index: 10;
-            max-width: 800px;
-            width: calc(100vw - 680px);
-        }
-
-        .action-btn {
-            background: var(--accent-blue);
-            color: #0f172a;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
-        }
-
-        .action-btn.secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-        }
-
-        .action-btn.secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: none;
-        }
-
-        /* Cross Section Overlay Box */
+        /* ---------- Cross Section Box ---------- */
         .cross-section-box {
             position: absolute;
-            top: 80px;
-            left: 360px;
+            top: 10px;
+            left: 326px;
             width: 220px;
             height: 220px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--accent-blue);
-            border-radius: 12px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius-lg);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+        }
+
+        .cross-section-box:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(14, 165, 233, 0.10);
         }
 
         .cs-header {
-            background: rgba(56, 189, 248, 0.2);
-            font-size: 0.75rem;
-            padding: 4px 8px;
+            background: rgba(14, 165, 233, 0.10);
+            font-size: 0.7rem;
+            padding: 8px;
             color: var(--accent-blue);
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--panel-border);
         }
 
         #cs-canvas {
@@ -374,59 +645,166 @@
             height: 100%;
         }
 
-        /* Quiz Overlay Styles for Step 1 */
-        .quiz-container {
-            background: rgba(0, 0, 0, 0.3);
+        /* ---------- Bottom Banner ---------- */
+        .bottom-banner {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
             border: 1px solid var(--panel-border);
-            border-radius: 10px;
+            padding: 16px 24px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            z-index: 10;
+            max-width: 720px;
+            width: calc(100% - 680px);
+            min-width: 420px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-base);
+        }
+
+        .bottom-banner:hover {
+            border-color: var(--panel-border-strong);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .bottom-banner .guide-content {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 110px;
+            padding-right: 8px;
+        }
+
+        .bottom-banner .guide-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: 0.3px;
+        }
+
+        .bottom-banner .guide-text {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.20);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.20) 0%, transparent 100%);
+            opacity: 0;
+            transition: var(--transition-base);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.28);
+        }
+
+        .action-btn:hover::after {
+            opacity: 1;
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--panel-border-strong);
+            box-shadow: none;
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(15, 23, 42, 0.72);
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.10);
+        }
+
+        /* ---------- Quiz Styles ---------- */
+        .quiz-container {
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius-md);
             padding: 16px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .quiz-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--accent-blue);
-            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-teal);
+            margin-bottom: 12px;
         }
 
         .quiz-option {
             display: block;
             width: 100%;
             text-align: left;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(15, 23, 42, 0.70);
             border: 1px solid var(--panel-border);
             color: var(--text-main);
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin-bottom: 8px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            margin-bottom: 10px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.85rem;
+            transition: var(--transition-base);
+            font-size: 0.84rem;
         }
 
         .quiz-option:hover {
-            background: rgba(56, 189, 248, 0.15);
+            background: rgba(14, 165, 233, 0.08);
             border-color: var(--accent-blue);
+            transform: translateX(4px);
         }
 
         .quiz-option.correct {
-            background: rgba(34, 197, 94, 0.2) !important;
+            background: rgba(16, 185, 129, 0.12) !important;
             border-color: var(--accent-green) !important;
-            color: #4ade80 !important;
+            color: #047857 !important;
         }
 
         .quiz-option.wrong {
-            background: rgba(239, 68, 68, 0.2) !important;
+            background: rgba(239, 68, 68, 0.12) !important;
             border-color: var(--accent-red) !important;
-            color: #fca5a5 !important;
+            color: #b91c1c !important;
         }
 
-        /* Modal Overlay */
+        /* ---------- Modal Overlays ---------- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.75);
+            background: rgba(31, 41, 55, 0.55);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -442,31 +820,34 @@
         }
 
         .modal-card {
-            background: #1e293b;
-            border: 1px solid var(--panel-border);
-            border-radius: 16px;
-            padding: 24px;
+            background: linear-gradient(180deg, rgba(15,23,42,0.80) 0%, rgba(15,23,42,0.70) 100%);
+            border: 1px solid var(--panel-border-strong);
+            border-radius: var(--radius-lg);
+            padding: 28px;
             max-width: 480px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--shadow-lg), 0 0 40px rgba(14, 165, 233, 0.06);
+            transition: var(--transition-base);
         }
 
         .modal-card.error {
-            border-color: var(--accent-red);
+            border-color: rgba(239, 68, 68, 0.40);
+            box-shadow: var(--shadow-lg), 0 0 40px rgba(239, 68, 68, 0.08);
         }
 
         .modal-card.success {
-            border-color: var(--accent-green);
+            border-color: rgba(16, 185, 129, 0.40);
+            box-shadow: var(--shadow-lg), 0 0 40px rgba(16, 185, 129, 0.08);
         }
 
         .modal-card.irrigation {
-            border-color: var(--accent-blue);
+            border-color: rgba(14, 165, 233, 0.40);
         }
 
         .modal-icon {
             font-size: 3rem;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .modal-card.error .modal-icon { color: var(--accent-red); }
@@ -475,34 +856,36 @@
 
         .modal-title {
             font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 8px;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
         .modal-desc {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-sub);
-            margin-bottom: 20px;
-            line-height: 1.5;
+            margin-bottom: 22px;
+            line-height: 1.6;
             text-align: left;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 8px;
+            background: rgba(243, 244, 246, 0.20);
+            padding: 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--panel-border);
         }
 
-        /* X-Ray Modal Specifics */
+        /* ---------- X-Ray Modal ---------- */
         .xray-container {
             width: 100%;
             height: 240px;
             background: #000;
-            border: 2px solid var(--panel-border);
-            border-radius: 8px;
+            border: 1px solid var(--panel-border-strong);
+            border-radius: var(--radius-md);
             margin-bottom: 16px;
             position: relative;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
 
         #xray-canvas {
@@ -516,18 +899,18 @@
             top: 20px;
             bottom: 20px;
             width: 30px;
-            border-right: 1px solid rgba(255,255,255,0.5);
+            border-right: 1px solid rgba(56,189,248,0.45);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             font-size: 0.65rem;
             color: #fff;
-            font-family: monospace;
+            font-family: var(--font-mono);
         }
 
-        /* AI Patient Agent Modal Styles */
+        /* ---------- AI Agent Modal ---------- */
         .agent-card {
-            max-width: 720px;
+            max-width: 680px;
             width: 90%;
             max-height: 80vh;
             display: flex;
@@ -540,19 +923,27 @@
         .agent-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 18px 24px;
+            gap: 16px;
+            padding: 20px 28px;
             border-bottom: 1px solid var(--panel-border);
-            background: rgba(0, 0, 0, 0.15);
+            background: rgba(15, 23, 42, 0.72);
             flex-shrink: 0;
         }
 
         .agent-avatar-wrap {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             border-radius: 50%;
             flex-shrink: 0;
-            box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+            padding: 3px;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.18);
+            transition: var(--transition-base);
+        }
+
+        .agent-avatar-wrap:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 28px rgba(139, 92, 246, 0.28);
         }
 
         .agent-avatar {
@@ -560,18 +951,20 @@
             height: 100%;
             border-radius: 50%;
             display: block;
+            object-fit: cover;
+            background: var(--panel-solid);
         }
 
         .agent-name {
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--text-main);
         }
 
         .agent-role {
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             color: var(--text-sub);
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .agent-status {
@@ -580,13 +973,17 @@
             color: var(--accent-green);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.08);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .agent-chat {
             flex: 1;
             overflow-y: auto;
-            padding: 18px 24px;
+            padding: 20px 28px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -596,38 +993,41 @@
 
         .agent-bubble {
             max-width: 82%;
-            padding: 10px 14px;
-            border-radius: 14px;
+            padding: 12px 16px;
+            border-radius: 16px;
             font-size: 0.9rem;
             line-height: 1.55;
             user-select: text;
             word-break: break-word;
-            animation: bubbleIn 0.2s ease;
+            animation: bubbleIn 0.25s ease;
+            transition: var(--transition-fast);
         }
 
         @keyframes bubbleIn {
-            from { opacity: 0; transform: translateY(6px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .agent-bubble.user {
             align-self: flex-end;
-            background: var(--accent-blue);
-            color: #0f172a;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            color: #fff;
             border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.18);
         }
 
         .agent-bubble.patient {
             align-self: flex-start;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.74);
             border: 1px solid var(--panel-border);
+            color: var(--text-main);
             border-bottom-left-radius: 4px;
         }
 
         .agent-bubble.system {
             align-self: center;
-            background: rgba(34, 197, 94, 0.12);
-            border: 1px solid rgba(34, 197, 94, 0.3);
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
             color: var(--accent-green);
             font-size: 0.8rem;
             max-width: 92%;
@@ -637,82 +1037,78 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            padding: 10px 24px;
+            padding: 12px 28px;
             border-top: 1px solid var(--panel-border);
             flex-shrink: 0;
         }
 
         .agent-quick-actions button {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(15, 23, 42, 0.72);
             border: 1px solid var(--panel-border);
             color: var(--text-main);
-            padding: 5px 10px;
-            border-radius: 14px;
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 0.78rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition-base);
         }
 
         .agent-quick-actions button:hover {
-            border-color: var(--accent-blue);
-            background: rgba(56, 189, 248, 0.12);
+            border-color: var(--accent-teal);
+            background: rgba(20, 184, 166, 0.10);
+            transform: translateY(-1px);
         }
 
         .agent-input-row {
             display: flex;
-            gap: 10px;
-            padding: 14px 24px 24px;
+            gap: 12px;
+            padding: 14px 28px 28px;
             flex-shrink: 0;
         }
 
         .agent-input-row input {
             flex: 1;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(15, 23, 42, 0.78);
             border: 1px solid var(--panel-border);
-            border-radius: 20px;
-            padding: 8px 16px;
+            border-radius: 24px;
+            padding: 10px 18px;
             color: var(--text-main);
             font-size: 0.9rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: var(--transition-base);
+        }
+
+        .agent-input-row input::placeholder {
+            color: var(--text-muted);
         }
 
         .agent-input-row input:focus {
             border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.08);
         }
 
         .agent-finish-row {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            padding: 0 24px 24px;
+            gap: 14px;
+            padding: 0 28px 28px;
             flex-shrink: 0;
-        }
-
-        .step-item.completed {
-            border-color: var(--accent-green);
-            background: rgba(34, 197, 94, 0.12);
-        }
-
-        .step-item.completed .step-num {
-            background: var(--accent-green);
-            color: #0f172a;
         }
 
         .agent-typing {
             align-self: flex-start;
             display: flex;
             gap: 4px;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            background: rgba(15, 23, 42, 0.72);
             border: 1px solid var(--panel-border);
-            border-radius: 14px;
+            border-radius: 16px;
             border-bottom-left-radius: 4px;
         }
 
         .agent-typing span {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: var(--text-sub);
             animation: typingBounce 1.2s infinite ease-in-out;
@@ -725,9 +1121,44 @@
             0%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-5px); }
         }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--panel-border-strong);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+        /* ---------- Coze 悬浮按钮图标样式 ---------- */
+        /* 医生头像裁剪为圆形、加深、加边框，让它一眼就像可点击图标 */
+        img[src="doctor.jpeg"],
+        [class*="asstBtn"] img,
+        [class*="asst-btn"] img {
+            border-radius: 50% !important;
+            border: 2px solid #0f172a !important;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.45), 0 4px 14px rgba(0, 0, 0, 0.55) !important;
+            filter: brightness(0.75) contrast(1.15) saturate(0.9) !important;
+            object-fit: cover !important;
+        }
     </style>
+
 </head>
 <body>
+
+    <!-- 操作窗口：约占屏幕 80%，其余区域直接展示背景原图 -->
+    <div class="app-window">
 
     <!-- Header Navigation -->
     <header>
@@ -810,70 +1241,73 @@
             <canvas id="cs-canvas"></canvas>
         </div>
 
-        <!-- Tool & Machine Parameter Control Panel -->
-        <div class="panel tools-panel">
-            <div class="panel-title">
-                <i class="fa-solid fa-sliders"></i>
-                <span>器械与马达参数</span>
-            </div>
-            
-            <div style="font-size:0.8rem; color:var(--text-sub); margin-bottom:6px;">选择器械型号:</div>
-            <div class="tool-grid" id="tool-grid">
-                <!-- Dynamically Populated by JavaScript with Color Indicators -->
-            </div>
-
-            <div class="metric-box">
-                <div class="metric-header">
-                    <span>设定转速 (RPM)</span>
-                    <span id="rpm-val" class="metric-value">0 RPM</span>
+        <!-- Right Column: Tool & Telemetry -->
+        <div class="right-column">
+            <!-- Tool & Machine Parameter Control Panel -->
+            <div class="panel tools-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>器械与马达参数</span>
                 </div>
-            </div>
-            <div class="metric-box">
-                <div class="metric-header">
-                    <span>最大允许扭矩 (Torque)</span>
-                    <span id="torque-limit-val" class="metric-value">1.2 N·cm</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- Real-time Telemetry Data Panel -->
-        <div class="panel telemetry-panel">
-            <div class="panel-title">
-                <i class="fa-solid fa-chart-line"></i>
-                <span>实时力学监控与电测仪</span>
-            </div>
-
-            <div class="metric-box">
-                <div class="metric-header">
-                    <span><span id="metric-depth-label">入针深度</span> (Depth/Progress)</span>
-                    <span id="depth-val" class="metric-value">0.0 mm</span>
+                <div style="font-size:0.8rem; color:var(--text-sub); margin-bottom:6px;">选择器械型号:</div>
+                <div class="tool-grid" id="tool-grid">
+                    <!-- Dynamically Populated by JavaScript with Color Indicators -->
                 </div>
-                <div class="progress-bar-bg">
-                    <div id="depth-bar" class="progress-bar-fill"></div>
+
+                <div class="metric-box">
+                    <div class="metric-header">
+                        <span>设定转速 (RPM)</span>
+                        <span id="rpm-val" class="metric-value">0 RPM</span>
+                    </div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-header">
+                        <span>最大允许扭矩 (Torque)</span>
+                        <span id="torque-limit-val" class="metric-value">1.2 N·cm</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="metric-box">
-                <div class="metric-header">
-                    <span>实时压力/扭矩 (Stress/Torque)</span>
-                    <span id="torque-val" class="metric-value">0.00 N·cm</span>
+            <!-- Real-time Telemetry Data Panel -->
+            <div class="panel telemetry-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>实时力学监控与电测仪</span>
                 </div>
-                <div class="progress-bar-bg">
-                    <div id="torque-bar" class="progress-bar-fill"></div>
-                </div>
-            </div>
 
-            <div class="apex-display">
-                <div class="apex-label">根尖定位仪 (APEX LOCATOR)</div>
-                <div id="apex-readout" class="apex-value">2.0</div>
+                <div class="metric-box">
+                    <div class="metric-header">
+                        <span><span id="metric-depth-label">入针深度</span> (Depth/Progress)</span>
+                        <span id="depth-val" class="metric-value">0.0 mm</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="depth-bar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <div class="metric-box">
+                    <div class="metric-header">
+                        <span>实时压力/扭矩 (Stress/Torque)</span>
+                        <span id="torque-val" class="metric-value">0.00 N·cm</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="torque-bar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <div class="apex-display">
+                    <div class="apex-label">根尖定位仪 (APEX LOCATOR)</div>
+                    <div id="apex-readout" class="apex-value">2.0</div>
+                </div>
             </div>
         </div>
 
         <!-- Bottom Operation Guide & Action Buttons -->
         <div class="bottom-banner">
-            <div style="display:flex; flex-direction:column; gap:4px; flex:1; overflow-y:auto; max-height:120px; padding-right:8px;">
-                <span style="font-size:0.85rem; font-weight:600;" id="guide-title">操作指南与实验原理</span>
-                <span style="font-size:0.75rem; color:var(--text-sub); line-height:1.4;" id="guide-text"></span>
+            <div class="guide-content">
+                <span class="guide-title" id="guide-title">操作指南与实验原理</span>
+                <span class="guide-text" id="guide-text"></span>
                 <div id="quiz-area" style="display:none;" class="quiz-container"></div>
             </div>
             <div style="display:flex; gap:10px; flex-shrink:0;">
@@ -881,6 +1315,8 @@
                 <button class="action-btn secondary" onclick="resetSimulation()"><i class="fa-solid fa-rotate-left"></i> 重置本步</button>
             </div>
         </div>
+    </div>
+    <!-- /app-window -->
     </div>
 
     <!-- Incorrect Tool / Sequence Modal -->
@@ -954,21 +1390,74 @@
         <div class="modal-card agent-card">
             <div class="agent-header">
                 <div class="agent-avatar-wrap">
-                    <svg class="agent-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <img src="avatar-limin.png" class="agent-avatar" alt="李敏" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <svg class="agent-avatar" style="display:none;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <linearGradient id="avatarRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#22c55e;stop-opacity:1" />
+                            <linearGradient id="femaleAvatarBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:0.2" />
+                                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:0.2" />
+                            </linearGradient>
+                            <linearGradient id="femaleHair" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3d2c24" />
+                                <stop offset="100%" style="stop-color:#2a1e18" />
+                            </linearGradient>
+                            <linearGradient id="femaleSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f5d0b0" />
+                                <stop offset="100%" style="stop-color:#e8b896" />
+                            </linearGradient>
+                            <linearGradient id="femaleScrubs" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#0ea5e9" />
+                                <stop offset="100%" style="stop-color:#0284c7" />
                             </linearGradient>
                         </defs>
-                        <circle cx="50" cy="50" r="48" fill="rgba(56,189,248,0.12)" stroke="url(#avatarRing)" stroke-width="2.5"/>
-                        <path d="M25 85 Q50 58 75 85 V95 H25 Z" fill="#38bdf8"/>
-                        <circle cx="50" cy="42" r="19" fill="#f5d0b0"/>
-                        <path d="M31 36 Q50 12 69 36 Q72 48 68 56 Q65 50 60 48 Q55 52 50 52 Q45 52 40 48 Q35 50 32 56 Q28 48 31 36" fill="#4a3b32"/>
-                        <circle cx="42" cy="40" r="2" fill="#3d2e26"/>
-                        <circle cx="58" cy="40" r="2" fill="#3d2e26"/>
-                        <path d="M45 48 Q50 51 55 48" fill="none" stroke="#c58c6e" stroke-width="1.5" stroke-linecap="round"/>
-                        <ellipse cx="50" cy="55" rx="6" ry="3" fill="#e8b4a0" opacity="0.6"/>
+                        <!-- Background -->
+                        <circle cx="100" cy="100" r="96" fill="url(#femaleAvatarBg)" />
+
+                        <!-- Shoulders/Clothing -->
+                        <path d="M20 180 Q100 130 180 180 V200 H20 Z" fill="url(#femaleScrubs)" />
+                        <path d="M85 145 L100 175 L115 145" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round" />
+
+                        <!-- Neck -->
+                        <path d="M78 125 L78 150 Q100 160 122 150 L122 125" fill="#e0a884" />
+
+                        <!-- Face shape -->
+                        <ellipse cx="100" cy="92" rx="46" ry="52" fill="url(#femaleSkin)" />
+
+                        <!-- Hair back -->
+                        <path d="M54 75 Q50 130 58 150 L142 150 Q150 130 146 75 Q150 35 100 30 Q50 35 54 75" fill="url(#femaleHair)" />
+
+                        <!-- Hair front/bangs -->
+                        <path d="M54 75 Q60 50 100 48 Q140 50 146 75 Q148 55 135 42 Q100 28 65 42 Q52 55 54 75" fill="url(#femaleHair)" />
+                        <path d="M55 80 Q70 65 85 78 Q100 62 115 78 Q130 65 145 80" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" stroke-linecap="round" />
+
+                        <!-- Eyebrows -->
+                        <path d="M72 78 Q82 74 90 78" fill="none" stroke="#5a4236" stroke-width="2.5" stroke-linecap="round" />
+                        <path d="M110 78 Q118 74 128 78" fill="none" stroke="#5a4236" stroke-width="2.5" stroke-linecap="round" />
+
+                        <!-- Eyes -->
+                        <ellipse cx="81" cy="88" rx="6" ry="7" fill="#3d2e26" />
+                        <circle cx="83" cy="86" r="2" fill="white" />
+                        <ellipse cx="119" cy="88" rx="6" ry="7" fill="#3d2e26" />
+                        <circle cx="121" cy="86" r="2" fill="white" />
+
+                        <!-- Eyelashes -->
+                        <path d="M73 85 Q81 80 89 85" fill="none" stroke="#3d2e26" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M111 85 Q119 80 127 85" fill="none" stroke="#3d2e26" stroke-width="1.5" stroke-linecap="round" />
+
+                        <!-- Nose -->
+                        <path d="M100 96 L97 108 Q100 111 103 108" fill="none" stroke="#d49a78" stroke-width="2" stroke-linecap="round" />
+
+                        <!-- Mouth (slight worried smile - toothache) -->
+                        <path d="M86 120 Q100 116 114 120" fill="none" stroke="#c47a6a" stroke-width="2.5" stroke-linecap="round" />
+                        <ellipse cx="100" cy="125" rx="5" ry="2.5" fill="#e8a0a0" opacity="0.5" />
+
+                        <!-- Blush -->
+                        <ellipse cx="70" cy="108" rx="8" ry="5" fill="#e8a0a0" opacity="0.25" />
+                        <ellipse cx="130" cy="108" rx="8" ry="5" fill="#e8a0a0" opacity="0.25" />
+
+                        <!-- Earrings -->
+                        <circle cx="55" cy="100" r="3" fill="#f59e0b" opacity="0.8" />
+                        <circle cx="145" cy="100" r="3" fill="#f59e0b" opacity="0.8" />
                     </svg>
                 </div>
                 <div class="agent-meta">
@@ -984,6 +1473,7 @@
             <div class="agent-chat" style="min-height:auto; padding:24px; justify-content:center; text-align:center;">
                 <p style="font-size:1rem; font-weight:600;">AI 患者问诊已接入扣子智能体</p>
                 <p style="margin-top:12px; color:var(--text-sub); line-height:1.6;">
+                    <strong style="color:var(--text-main);">情景：</strong>早晨，一名捂着脸的病人走入了诊室。<br>
                     点击右下角“AI患者问诊”浮窗，与患者李敏对话并完成接诊评估。<br>
                     问诊结束后，点击下方按钮进入临床操作。
                 </p>
@@ -1096,12 +1586,13 @@
         function init3D() {
             const canvas = document.getElementById('webgl-canvas');
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0f172a);
+            // 背景设为透明，让 CSS 里的诊室照片透出来
+            scene.background = null;
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 10, 45);
 
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.shadowMap.enabled = true;
@@ -1190,8 +1681,8 @@
                 color: 0xf3eee0,
                 roughness: 0.34,
                 metalness: 0.0,
-                transparent: true,
-                opacity: 0.88,
+                transparent: false,
+                opacity: 1.0,
                 depthWrite: true,
                 side: THREE.DoubleSide,
                 clearcoat: 0.08,
@@ -1281,7 +1772,19 @@
 
             // 计算根管口入口世界坐标：取根管/髓腔几何体冠方顶部中心
             // 该点用于将锉（fileGroup）尖端与根管口对齐
-            const canalBox = new THREE.Box3().setFromObject(canalMesh);
+            let canalBox = new THREE.Box3().setFromObject(canalMesh);
+            canalEntryWorld.set(
+                (canalBox.min.x + canalBox.max.x) / 2 + toothGroup.position.x,
+                canalBox.max.y + toothGroup.position.y,
+                (canalBox.min.z + canalBox.max.z) / 2 + toothGroup.position.z
+            );
+
+            // 让锉位于牙齿正上方：将根管口水平中心对齐到世界坐标原点
+            toothGroup.position.x -= canalEntryWorld.x;
+            toothGroup.position.z -= canalEntryWorld.z;
+
+            // 重新计算根管口世界坐标（此时 x/z 为 0）
+            canalBox = new THREE.Box3().setFromObject(canalMesh);
             canalEntryWorld.set(
                 (canalBox.min.x + canalBox.max.x) / 2 + toothGroup.position.x,
                 canalBox.max.y + toothGroup.position.y,
@@ -2384,7 +2887,12 @@
                         bot_id: botId,          // 扣子智能体 ID（重要）
                     },
                     componentProps: {
-                        title: 'AI患者问诊',     // 浮窗标题（重要：匹配平台风格）
+                        title: 'Coze',          // 浮窗标题
+                    },
+                    ui: {
+                        asstBtn: {
+                            icon: 'doctor.jpeg', // 浮窗图标使用医生头像
+                        }
                     },
                     auth: {
                         type: 'token',

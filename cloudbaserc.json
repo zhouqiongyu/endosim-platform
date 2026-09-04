@@ -1,0 +1,40 @@
+{
+  "envId": "你的云开发环境ID",
+  "framework": {
+    "name": "endosim-platform",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "buildCommand": "",
+          "outputPath": "public",
+          "cloudPath": "/"
+        }
+      },
+      "server": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "cloudfunctions",
+          "functions": [
+            {
+              "name": "coze-token",
+              "config": {
+                "runtime": "Nodejs18.15",
+                "memorySize": 256,
+                "timeout": 10,
+                "handler": "index.main_handler",
+                "envVariables": {
+                  "COZE_BOT_ID": "",
+                  "COZE_APP_ID": "",
+                  "COZE_KID": "",
+                  "COZE_PRIVATE_KEY": "",
+                  "FRONTEND_ORIGIN": ""
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

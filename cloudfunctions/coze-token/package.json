@@ -1,0 +1,9 @@
+{
+  "name": "coze-token",
+  "version": "1.0.0",
+  "description": "Coze OAuth token SCF cloud function",
+  "main": "index.js",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3"
+  }
+}

@@ -288,3 +288,110 @@ taskkill /PID <PID> /F
 
 - localtunnel 需要按页面提示输入 IP 验证，有时网络不稳定会返回 408，可重试或换 ngrok。
 - ngrok 需要注册账号并配置 authtoken：`npx ngrok config add-authtoken <你的token>`。
+
+---
+
+## Serverless 全栈部署：腾讯云开发 CloudBase + 云函数 SCF
+
+如果你希望把前端放在 CloudBase 静态托管、后端放在 SCF 云函数，项目已预留好相关代码，按下面步骤操作即可。
+
+### 架构说明
+
+| 部分 | 平台 | 对应文件/目录 |
+|------|------|--------------|
+| 前端 | CloudBase 静态网站托管 | `public/` |
+| 后端 | SCF 云函数（Node.js 18） | `cloudfunctions/coze-token/` |
+| 部署配置 | CloudBase Framework | `cloudbaserc.json` |
+
+前端通过 `public/config.js` 里的 `window.COZE_TOKEN_URL` 指向 SCF 云函数地址；本地开发时保持为空，前端会走相对路径 `/api/coze/token`。
+
+### 1. 安装并登录 CloudBase CLI
+
+```bash
+npm install -g @cloudbase/cli@latest
+cloudbase login
+```
+
+### 2. 创建云开发环境
+
+1. 打开 [腾讯云 CloudBase 控制台](https://console.cloud.tencent.com/tcb)。
+2. 新建一个环境（例如 `endosim-xxx`），记下 **环境 ID**。
+3. 编辑项目根目录的 `cloudbaserc.json`，把 `"envId": "你的云开发环境ID"` 替换为真实环境 ID。
+
+### 3. 部署后端云函数
+
+第一次只部署云函数，获取到 API 触发地址后，再配置前端：
+
+```bash
+cloudbase framework deploy --plugin server
+```
+
+部署成功后，打开 CloudBase 控制台 → **云函数** → `coze-token` → **触发管理**，复制类似下面的触发地址：
+
+```
+https://service-xxx.gz.apigw.tencentcs.com/release/coze-token
+```
+
+### 4. 配置云函数环境变量
+
+在控制台 → 云函数 `coze-token` → **函数配置** → **环境变量** 中添加：
+
+| 变量名 | 说明 |
+|--------|------|
+| `COZE_BOT_ID` | Coze 智能体 ID |
+| `COZE_APP_ID` | Coze OAuth 应用 ID |
+| `COZE_KID` | Coze 公钥 ID |
+| `COZE_PRIVATE_KEY` | RSA 私钥完整 PEM（保留换行） |
+| `FRONTEND_ORIGIN` | 前端部署后的域名，例如 `https://endosim-xxx.tcloudbaseapp.com`；测试阶段可填 `*` |
+
+> 如果私钥太长，控制台可能粘贴不便，也可以在 SCF 控制台里把私钥转成 **base64** 后存为 `COZE_PRIVATE_KEY_BASE64`，然后修改 `cloudfunctions/coze-token/index.js` 先 `Buffer.from(..., 'base64').toString()` 解码。
+
+### 5. 修改前端 API 地址
+
+编辑 `public/config.js`：
+
+```js
+window.COZE_TOKEN_URL = 'https://service-xxx.gz.apigw.tencentcs.com/release/coze-token';
+```
+
+把上面的地址替换为你在第 3 步复制的真实地址。
+
+### 6. 部署前端静态网站
+
+```bash
+cloudbase framework deploy --plugin client
+```
+
+部署成功后，控制台会给出前端访问地址，例如：
+
+```
+https://endosim-xxx.tcloudbaseapp.com
+```
+
+### 7. 配置跨域（FRONTEND_ORIGIN）
+
+把第 6 步得到的前端地址填回云函数环境变量 `FRONTEND_ORIGIN`，然后保存。这样 token 接口只对你的前端域名开放，更加安全。
+
+### 8. 验证
+
+1. 打开前端地址，按 F12 查看 Network 面板。
+2. 应该能看到对 `coze-token` 云函数的请求返回 200，并带有 `access_token`。
+3. 右下角应出现 Coze 浮窗，点击可发送消息。
+
+### 整合要点
+
+- **前端 → 后端**：`public/config.js` 中的 `window.COZE_TOKEN_URL` 是唯一的连接点；本地开发保持为空即可。
+- **后端 → Coze**：`cloudfunctions/coze-token/index.js` 中用 RSA 私钥签名 JWT，再向 Coze 换短期 access_token；私钥只存在于 SCF 环境变量，不会进入前端或仓库。
+- **跨域**：SCF 函数已内置 CORS 处理，会根据 `FRONTEND_ORIGIN` 返回对应 `Access-Control-Allow-Origin`。
+- **刷新**：`onRefreshToken` 会向同一个 `tokenUrl` 发送 `POST`，云函数收到 POST 会强制刷新 token。
+
+### 常见问题
+
+**Q：SCF 返回 500 `Coze OAuth credentials not configured`**
+A：环境变量未配置或私钥换行丢失。在 SCF 控制台检查变量，并确认私钥是完整的 PEM。
+
+**Q：浏览器报 CORS 错误**
+A：把 `FRONTEND_ORIGIN` 改成前端真实域名（包含 `https://`），不要带末尾斜杠；测试阶段可临时设为 `*`。
+
+**Q：部署时报 `envId` 不存在**
+A：确认 `cloudbaserc.json` 里的环境 ID 和 CloudBase 控制台里的环境 ID 完全一致。
